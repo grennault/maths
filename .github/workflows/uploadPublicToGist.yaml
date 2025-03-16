@@ -1,0 +1,46 @@
+name: Upload files to Gist and record Gist URLs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  upload_to_gist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/githubcli.asc
+          sudo apt update
+          sudo apt install gh
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token < ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload files from /public to Gist
+        run: |
+          # Initialize an empty string to hold the list of file names and Gist URLs
+          GIST_LIST=""
+
+          # Loop through each file in the /public directory
+          for file in $(find public -type f); do
+            # Upload the file to Gist
+            gist_url=$(gh gist create "$file" --public --description "Uploading $file from /public directory" --json url -q)
+            
+            # Add the file name and Gist URL to the list
+            GIST_LIST+="$file -> $gist_url"$'\n'
+          done
+
+          # Create a gists_list.txt file with the list of file names and Gist URLs
+          echo "$GIST_LIST" > gists_list.txt
+
+      - name: Commit gists_list.txt file to repository
+        run: |
+          git add gists_list.txt
+          git commit -m "Add gists_list.txt with file names and Gist URLs"
+          git push
