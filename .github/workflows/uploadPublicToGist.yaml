@@ -33,11 +33,17 @@ jobs:
             # Upload the file to Gist with a description and public visibility
             gist_url=$(gh gist create "$file" -p -d "Uploading $file from /public directory")
 
-            # Add the file name and Gist URL to the list
-            GIST_LIST+="$file -> $gist_url"$'\n'
+            # Extract the Gist ID from the Gist URL (after 'gist.github.com/' and before '.')
+            gist_id=$(echo "$gist_url" | sed 's|https://gist.github.com/[^/]\+/||g' | sed 's|/|_|g')
+
+            # Create the embed script tag
+            embed_code="<script src=\"https://gist.github.com/$gist_id.js\"></script>"
+
+            # Add the file name and embed code to the list
+            GIST_LIST+="$file -> $embed_code"$'\n'
           done
 
-          # Create a gists_list.txt file with the list of file names and Gist URLs
+          # Create a gists_list.txt file with the list of file names and Gist embed code
           echo "$GIST_LIST" > gists_list.txt
 
       - name: Configure Git user identity
@@ -48,5 +54,5 @@ jobs:
       - name: Commit gists_list.txt file to repository
         run: |
           git add gists_list.txt
-          git commit -m "Add gists_list.txt with file names and Gist URLs"
+          git commit -m "Add gists_list.txt with file names and Gist embed codes"
           git push
