@@ -1,2 +1,2 @@
-public/example-data-analysis.ipynb -> https://gist.github.com/grennault/fbda70e23a8f339c4cabb09ff8cccf42
+public/example-data-analysis.ipynb -> <script src="https://gist.github.com/79eddd4cc3b5c824f135a96ac4bced8b.js"></script>
 
