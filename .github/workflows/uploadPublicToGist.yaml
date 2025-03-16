@@ -30,9 +30,9 @@ jobs:
 
           # Loop through each file in the /public directory
           for file in $(find public -type f); do
-            # Upload the file to Gist
-            gist_url=$(gh gist create "$file" --public --description "Uploading $file from /public directory" --json url -q)
-            
+            # Upload the file to Gist with a description and public visibility
+            gist_url=$(gh gist create "$file" -p -d "Uploading $file from /public directory")
+
             # Add the file name and Gist URL to the list
             GIST_LIST+="$file -> $gist_url"$'\n'
           done
