@@ -19,9 +19,9 @@ jobs:
           sudo apt update
           sudo apt install gh
 
-      - name: Authenticate GitHub CLI
+      - name: Authenticate GitHub CLI with Personal Access Token (PAT)
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          echo ${{ secrets.GIST_TOKEN }} | gh auth login --with-token
 
       - name: Upload files from /public to Gist
         run: |
